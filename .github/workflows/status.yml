@@ -1,0 +1,22 @@
+name: Serverstatus
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+concurrency:
+  group: status
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node status.mjs
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          STATUS_CHANNEL_ID: ${{ vars.STATUS_CHANNEL_ID }}
+          ALERT_USER_ID: ${{ vars.ALERT_USER_ID }}
